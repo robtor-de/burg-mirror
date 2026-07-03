@@ -117,7 +117,7 @@ DEBMIRROR_DEFAULTS = {
     "arch":    "amd64",
     "dist":    "stable",
     "section": "main",
-    "i10n":    False,
+    "i10n":    True,
     "sources": False,
 }
 
@@ -174,8 +174,8 @@ def mirror_deb(name: str, cfg: dict, gpg_store: GpgKeyStore) -> None:
     if keyring and keyring.exists():
         cmd.append(f"--keyring={keyring.resolve()}")
 
-    if not i10n:
-        cmd.append("--no-i18n")
+    if i10n:
+        cmd.append("--i18n")
 
     if not sources:
         cmd.append("--nosource")
