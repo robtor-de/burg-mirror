@@ -1,0 +1,82 @@
+# project_mirror.yaml – Beispielkonfiguration für project_mirror.py
+#
+# Jedes "Projekt" bündelt alles was für ein selbst-hostbares System
+# offline verfügbar gemacht werden soll: Docker-Images, Source-/Doku-
+# Git-Repos und beliebige Dateien (GitHub-Releases oder generische URLs).
+
+base-dir: /srv/mirrors/projects   # jedes Projekt bekommt <base-dir>/<projekt-name>/
+
+projects:
+
+  # ============================================================
+  # Immich – Beispiel mit allem was dazugehört
+  # ============================================================
+  immich:
+
+    docker-images:
+      - image: ghcr.io/immich-app/immich-server
+        tag: release
+      - image: ghcr.io/immich-app/immich-machine-learning
+        tag: release
+      - image: docker.io/library/postgres
+        tag: "15"
+      - image: docker.io/redis/redis-stack-server
+        tag: latest
+
+    repos:
+      - url: https://github.com/immich-app/immich.git
+        name: immich-source            # optional, sonst aus URL abgeleitet
+
+    files:
+      # --- Android Client von GitHub Releases, automatisch "latest" ---
+      android-client:
+        source: github
+        repo: immich-app/immich
+        version: latest
+        asset-pattern: "\\.apk$"        # Regex gegen Asset-Dateinamen
+
+      # --- Feste Version statt latest ---
+      # android-client-pinned:
+      #   source: github
+      #   repo: immich-app/immich
+      #   version: "v1.118.2"
+      #   asset-pattern: "\\.apk$"
+
+      # --- ML-Modell über generisches URL-Template ---
+      ml-model-clip:
+        source: url
+        url-template: "https://huggingface.co/immich-app/ViT-B-32__openai/resolve/main/model.onnx"
+        version: "main"               # statisch, kein latest-Check nötig
+        filename: "clip-vit-b32.onnx"
+
+      # --- Generisches Beispiel MIT latest-Auflösung über eigene API ---
+      # some-other-tool:
+      #   source: url
+      #   url-template: "https://example.com/dl/v{version}/tool-{version}-linux.tar.gz"
+      #   version: latest
+      #   version-check-url: "https://example.com/api/latest"
+      #   version-check-jsonpath: "tag_name"
+
+    # Optionales Doku-Repo – ein zentrales Repo über alle Projekte hinweg,
+    # bekommt einen Eintrag in projects.txt
+    doc-repo: git@github.com:mein-org/mirror-doku.git
+
+
+  # ============================================================
+  # Zweites Beispiel, schlanker – Paperless-ngx
+  # ============================================================
+  paperless:
+
+    docker-images:
+      - image: ghcr.io/paperless-ngx/paperless-ngx
+        tag: latest
+      - image: docker.io/library/postgres
+        tag: "16"
+      - image: docker.io/library/redis
+        tag: "7"
+
+    repos:
+      - url: https://github.com/paperless-ngx/paperless-ngx.git
+
+    files:
+      # Keine Releases nötig in diesem Beispiel, files kann auch leer/weggelassen werden

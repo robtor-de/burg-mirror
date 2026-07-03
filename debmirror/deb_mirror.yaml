@@ -1,0 +1,46 @@
+# deb_mirror.yaml – Beispielkonfiguration für deb_mirror.py
+
+# ============================================================
+# gpg-keys  –  Globaler GPG-Key-Store
+# ============================================================
+gpg-keys:
+  store-path: /etc/mirror/gpg-keys
+
+  keys:
+    debian-archive-12:
+      url: "https://ftp-master.debian.org/keys/archive-key-12.asc"
+
+    debian-archive-11:
+      url: "https://ftp-master.debian.org/keys/archive-key-11.asc"
+
+    ubuntu-jammy:
+      url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C"
+
+
+# ============================================================
+# deb-mirrors  –  debmirror
+# ============================================================
+deb-mirrors:
+
+  debian-stable:
+    path: deb.debian.org/debian
+    method: http                    # http | ftp | rsync | ssh
+    gpg-key: debian-archive-12
+    target-path: /srv/mirrors/debian/stable
+    dist: stable,stable-updates,stable-backports
+    section: main,contrib,non-free,non-free-firmware
+    arch: amd64,arm64
+    i10n: false
+    sources: false
+    debmirror-options: "--progress"
+
+  ubuntu-jammy:
+    path: de.archive.ubuntu.com/ubuntu
+    method: http
+    gpg-key: ubuntu-jammy
+    target-path: /srv/mirrors/ubuntu/jammy
+    dist: jammy,jammy-updates,jammy-security
+    section: main,restricted,universe,multiverse
+    arch: amd64
+    i10n: false
+    sources: false
